@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0f766e">
+<title>KD-HQS | Demonstration Prototype</title>
+<style>
+:root{--teal:#0f766e;--teal2:#115e59;--ink:#17212b;--muted:#657482;--line:#dfe7e9;--bg:#f4f7f8;--card:#fff;--blue:#2563eb;--amber:#b45309;--red:#b91c1c;--green:#15803d}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+button,input,select,textarea{font:inherit}button{cursor:pointer}
+.app{min-height:100vh;display:grid;grid-template-columns:250px 1fr}
+.sidebar{background:#102f33;color:#ecfeff;padding:20px 14px;display:flex;flex-direction:column;gap:18px}
+.brand{display:flex;gap:11px;align-items:center;padding:4px 8px 16px;border-bottom:1px solid #355457}
+.logo{width:42px;height:42px;border-radius:12px;background:#d1fae5;color:#065f46;display:grid;place-items:center;font-weight:900;font-size:19px}
+.brand strong{display:block;font-size:15px}.brand small{color:#b8d2d4;font-size:11px}
+.nav-label{font-size:10px;letter-spacing:1.3px;color:#a8c2c4;padding:0 10px;text-transform:uppercase}
+.nav button{width:100%;border:0;background:transparent;color:#d8e7e8;padding:11px 12px;text-align:left;border-radius:9px;margin:2px 0;display:flex;gap:10px;align-items:center}
+.nav button:hover,.nav button.active{background:#245154;color:white}.nav .ico{width:20px;text-align:center}
+.sidebar-foot{margin-top:auto;font-size:11px;color:#a8c2c4;padding:10px}
+main{min-width:0}.topbar{background:#fff;border-bottom:1px solid var(--line);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.topbar h1{font-size:18px;margin:0}.topbar p{margin:3px 0 0;color:var(--muted);font-size:12px}
+.top-actions{display:flex;align-items:center;gap:8px}.pill{border-radius:999px;background:#e0f2fe;color:#075985;padding:5px 10px;font-size:11px;font-weight:700}
+.content{padding:22px;max-width:1500px;margin:auto}.welcome{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:18px}.welcome h2{font-size:24px;margin:0 0 5px}.welcome p{margin:0;color:var(--muted);max-width:720px}
+.btn{border:1px solid var(--line);background:white;border-radius:9px;padding:9px 13px;color:var(--ink);font-weight:650}.btn.primary{background:var(--teal);border-color:var(--teal);color:white}.btn.primary:hover{background:var(--teal2)}.btn.small{padding:6px 9px;font-size:12px}
+.grid{display:grid;gap:14px}.stats{grid-template-columns:repeat(4,minmax(0,1fr));margin:18px 0}.stat,.panel,.module-card{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:0 2px 6px #102f3308}
+.stat{padding:16px}.stat-top{display:flex;justify-content:space-between;color:var(--muted);font-size:12px}.stat .num{font-size:28px;font-weight:800;margin:9px 0 3px}.stat small{color:var(--muted)}
+.panel{padding:18px;margin-bottom:16px}.panel-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:13px}.panel h3{margin:0;font-size:16px}.panel-sub{font-size:12px;color:var(--muted);margin-top:3px}
+.two-col{grid-template-columns:1.3fr 1fr}.module-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.module-card{padding:16px;text-align:left;display:block;color:inherit;width:100%;transition:transform .12s,border-color .12s}.module-card:hover{transform:translateY(-2px);border-color:#82b9b4}.module-icon{width:39px;height:39px;border-radius:11px;display:grid;place-items:center;font-size:20px;margin-bottom:12px}.module-card strong{display:block;margin-bottom:5px}.module-card p{margin:0;color:var(--muted);font-size:12px}.tag{display:inline-block;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:700;background:#f1f5f9;color:#475569}
+select,input,textarea{width:100%;border:1px solid #cbd5da;border-radius:8px;padding:9px 10px;background:white;color:var(--ink)}
+label{display:block;font-size:12px;font-weight:700;margin-bottom:6px;color:#34444d}.field{margin-bottom:13px}.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+table{border-collapse:collapse;width:100%;font-size:13px}th,td{padding:11px 9px;border-bottom:1px solid #e8edef;text-align:left;vertical-align:top}th{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);background:#f8fafb}tr:last-child td{border-bottom:0}
+.status{display:inline-block;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:700}.status.ok{background:#dcfce7;color:#166534}.status.review{background:#fef3c7;color:#92400e}.status.draft{background:#e2e8f0;color:#475569}
+.barrow{display:grid;grid-template-columns:120px 1fr 40px;gap:10px;align-items:center;margin:13px 0;font-size:12px}.bar{height:9px;background:#e8eff0;border-radius:99px;overflow:hidden}.bar span{display:block;height:100%;background:var(--teal);border-radius:99px}
+.notice{background:#fffbeb;border:1px solid #fde68a;color:#854d0e;padding:12px;border-radius:10px;font-size:12px;margin-bottom:15px}
+.muted{color:var(--muted)}.empty{padding:26px;text-align:center;color:var(--muted)}.hidden{display:none!important}.footer-note{font-size:11px;color:var(--muted);margin:18px 0}
+.mobile-head{display:none}
+@media(max-width:1000px){.app{grid-template-columns:205px 1fr}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.module-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.two-col{grid-template-columns:1fr}.content{padding:16px}}
+@media(max-width:700px){.app{display:block}.sidebar{display:none}.mobile-head{display:flex;gap:8px;overflow:auto;padding:9px;background:#102f33}.mobile-head button{white-space:nowrap;border:0;border-radius:7px;padding:8px 10px;background:#245154;color:#fff;font-size:12px}.topbar{padding:12px 14px}.topbar h1{font-size:15px}.top-actions .pill{display:none}.content{padding:13px}.welcome{display:block}.welcome h2{font-size:21px}.welcome .btn{margin-top:12px}.stats{gap:9px}.stat{padding:12px}.stat .num{font-size:24px}.module-grid{grid-template-columns:1fr 1fr;gap:9px}.module-card{padding:12px}.module-card p{font-size:11px}.form-grid{grid-template-columns:1fr}.panel{padding:13px;overflow-x:auto}.barrow{grid-template-columns:95px 1fr 32px}.table-wrap{overflow-x:auto}table{min-width:620px}}
+
+/* KD-HQS visual refresh: richer colour, softer cards and clearer hierarchy */
+:root{--teal:#0f766e;--teal2:#115e59;--ink:#172554;--muted:#64748b;--line:#e2e8f0;--bg:#f3f6fc;--card:#ffffff;--blue:#2563eb;--amber:#b45309;--red:#b91c1c;--green:#15803d}
+body{background:radial-gradient(ellipse at 92% 0%,#dbeafe 0,transparent 30%),radial-gradient(ellipse at 0% 30%,#ccfbf1 0,transparent 25%),#f3f6fc;color:#172554}
+.sidebar{background:linear-gradient(165deg,#102a56 0%,#123d55 55%,#0f766e 100%);box-shadow:8px 0 28px #102a5615}
+.logo{background:linear-gradient(135deg,#ccfbf1,#bfdbfe);color:#12345b;box-shadow:0 5px 16px #00000018}
+.nav button{border:1px solid transparent;transition:background .18s,transform .18s}
+.nav button:hover,.nav button.active{background:linear-gradient(90deg,#ffffff25,#ffffff10);border-color:#ffffff20;transform:translateX(2px)}
+.topbar{background:#ffffffd9;backdrop-filter:blur(12px);border-bottom:1px solid #dce5f1;box-shadow:0 4px 18px #0f172a08}
+.topbar h1{color:#12345b;letter-spacing:-.35px}
+.content{background:transparent}
+.welcome{position:relative;overflow:hidden;background:linear-gradient(120deg,#12345b 0%,#155e75 52%,#0f766e 100%);border:0!important;border-radius:22px!important;color:#fff!important;box-shadow:0 15px 36px #12345b25!important}
+.welcome:after{content:'✚';position:absolute;right:7%;top:-35px;font-size:180px;line-height:1;color:#ffffff0c;pointer-events:none;font-weight:900}
+.welcome h2,.welcome p,.welcome .muted{color:#fff!important;position:relative;z-index:1}
+.welcome .btn{position:relative;z-index:2;background:#fff!important;color:#0f766e!important;border:0!important;font-weight:800;box-shadow:0 5px 14px #00000018}
+.stat,.panel,.module-card{border:1px solid #e2e8f0;border-radius:18px;box-shadow:0 6px 20px #1e293b0a;transition:transform .16s,box-shadow .16s,border-color .16s}
+.stat:hover,.panel:hover,.module-card:hover{box-shadow:0 12px 28px #1e293b12;border-color:#cbd5e1}
+.stat{position:relative;overflow:hidden;padding:18px;background:linear-gradient(145deg,#fff 0%,#f8fbff 100%)}
+.stat:after{content:'';position:absolute;width:82px;height:82px;right:-28px;bottom:-35px;border-radius:50%;background:var(--stat-tint,#dbeafe);opacity:.65}
+.stats .stat:nth-child(1){--stat-tint:#99f6e4;border-top:4px solid #0d9488}.stats .stat:nth-child(2){--stat-tint:#bfdbfe;border-top:4px solid #3b82f6}.stats .stat:nth-child(3){--stat-tint:#ddd6fe;border-top:4px solid #8b5cf6}.stats .stat:nth-child(4){--stat-tint:#fed7aa;border-top:4px solid #f97316}
+.stat .num{color:#12345b;font-size:32px;letter-spacing:-.8px;position:relative;z-index:1}
+.stat .stat-top{font-weight:700;color:#475569;position:relative;z-index:1}
+.panel{background:#ffffffed;padding:18px}
+.panel h3{color:#12345b}
+.module-card{background:linear-gradient(150deg,#fff,#f8fbff);border-radius:17px;padding:18px}
+.module-card:hover{transform:translateY(-4px);border-color:#5eead4}
+.module-icon{width:46px;height:46px;border-radius:14px;box-shadow:inset 0 0 0 1px #ffffffa0;font-size:22px}
+.tag{background:#e0f2fe;color:#075985;border:1px solid #bae6fd}
+.status{letter-spacing:.15px}
+.btn{border-radius:11px;box-shadow:0 3px 10px #0f766e12;transition:transform .15s,box-shadow .15s}
+.btn:hover{transform:translateY(-1px);box-shadow:0 7px 15px #0f766e20}
+input,select,textarea{border-radius:10px!important;border-color:#cbd5e1!important;background:#fff}
+input:focus,select:focus,textarea:focus{outline:3px solid #99f6e455;border-color:#0d9488!important}
+table th{background:#eff6ff;color:#1e3a5f}
+table tr:hover td{background:#f8fbff}
+.bar{background:#e2e8f0;border-radius:999px;overflow:hidden}.bar span{background:linear-gradient(90deg,#2563eb,#0d9488)!important;border-radius:999px}
+.mobile-head{background:linear-gradient(90deg,#102a56,#0f766e)!important}
+.mobile-head button{border:1px solid #ffffff22!important}
+@media(max-width:700px){.welcome{border-radius:18px!important}.stat .num{font-size:26px}.panel{border-radius:15px}.module-card{border-radius:15px}}
+
+
+/* Demo access gate */
+#accessGate{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:22px;background:radial-gradient(circle at top left,#ccfbf1 0,#eff6ff 42%,#f5f3ff 100%);font-family:inherit}
+.access-card{width:min(100%,460px);background:#ffffffef;border:1px solid #dbeafe;border-radius:26px;padding:28px;box-shadow:0 24px 70px #1e3a5f22}
+.access-logo{width:62px;height:62px;border-radius:19px;background:linear-gradient(135deg,#2563eb,#0d9488);display:grid;place-items:center;color:white;font-size:25px;font-weight:900;box-shadow:0 10px 24px #0d948833}
+.access-card h1{color:#12345b;margin:18px 0 5px;font-size:25px}.access-card p{color:#64748b;font-size:13px}.access-card label{display:block;font-weight:700;font-size:13px;margin:15px 0 6px}.access-card select,.access-card input{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:11px;font-size:16px}.access-card button{width:100%;margin-top:17px;padding:13px;border:0;border-radius:12px;color:white;font-weight:800;background:linear-gradient(90deg,#2563eb,#0d9488)}.access-warning{background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;padding:10px;border-radius:10px;font-size:12px;margin-top:14px}
+.app{display:none}.app.unlocked{display:grid}
+@media(max-width:700px){.access-card{padding:22px}.access-card h1{font-size:22px}}
+
+</style>
+</head>
+<body>
+
+<div id="accessGate" style="display:none">
+ <div class="access-card">
+  <div class="access-logo">K+</div>
+  <h1>KD-HQS</h1>
+  <p>Kiruhura District Health Quality System · Demonstration access</p>
+  <form id="accessForm">
+   <label for="accessRole">Choose demo access role</label>
+   <select id="accessRole">
+    <option value="district">District reviewer</option>
+    <option value="hmis">District HMIS focal person</option>
+    <option value="programme">Programme focal person</option>
+    <option value="facility">Facility in-charge / HMIS officer</option>
+    <option value="lab">Laboratory focal person</option>
+    <option value="readonly">Read-only supervisor</option>
+   </select>
+   <label for="accessCode">Demo access code</label>
+   <input id="accessCode" type="password" inputmode="numeric" autocomplete="off" placeholder="Enter demo code" required>
+   <button type="submit">Enter demonstration</button>
+   <div id="accessMessage" role="status" style="font-size:13px;margin-top:10px;color:#b91c1c"></div>
+  </form>
+  <div class="access-warning"><strong>Demo only:</strong> these codes are built into this file and are not real security. Do not use real patient data. This prototype has no server login, secure permissions or multi-device synchronization.</div>
+ </div>
+</div>
+
+<div class="app unlocked">
+<aside class="sidebar">
+ <div class="brand"><div class="logo">K+</div><div><strong>KD-HQS</strong><small>Health Quality System</small></div></div>
+ <div class="nav-label">Workspace</div>
+ <nav class="nav" id="sideNav">
+  <button class="active" data-page="dashboard"><span class="ico">▦</span>Dashboard</button>
+  <button data-page="facilities"><span class="ico">⌂</span>Facilities</button>
+  <button data-page="reports"><span class="ico">▤</span>Aggregate reports</button>
+  <button data-page="programmes"><span class="ico">✚</span>Programmes</button>
+  <button data-page="qi"><span class="ico">↗</span>QI projects</button>
+  <button data-page="quality"><span class="ico">✓</span>Data quality checks</button>
+  <button data-page="sync"><span class="ico">⇅</span>Offline & sync</button>
+ </nav>
+ <div class="sidebar-foot">Demonstration only<br>Not an official district system</div>
+</aside>
+<main>
+ <header class="topbar">
+  <div><h1 id="pageTitle">District dashboard</h1><p>Kiruhura District · Health data quality and improvement</p></div>
+  <div class="top-actions"><span class="pill">SYNTHETIC DATA</span><button class="btn small" id="roleBtn">Role: District reviewer ▾</button></div>
+ </header>
+ <div class="mobile-head" id="mobileNav">
+  <button data-page="dashboard">Dashboard</button><button data-page="facilities">Facilities</button><button data-page="reports">Reports</button><button data-page="programmes">Programmes</button><button data-page="qi">QI projects</button><button data-page="quality">Data checks</button><button data-page="sync">Offline & sync</button>
+ </div>
+ <div class="content">
+  <div class="notice"><strong>Prototype notice:</strong> all sample figures and reports are fictional. Do not enter patient-identifiable or real operational health data. This file is a local demonstration, not a secure production service.</div>
+  <section id="page-dashboard" class="page">
+   <div class="welcome"><div><h2>Good day, district team</h2><p>Monitor aggregate reporting, identify data-quality gaps and follow quality improvement work across the listed service locations.</p></div><button class="btn primary" onclick="go('reports')">＋ New aggregate report</button></div>
+   <div class="grid stats">
+    <div class="stat"><div class="stat-top"><span>Listed locations</span><span>⌂</span></div><div class="num" id="statFacilities">16</div><small>Configured in directory</small></div>
+    <div class="stat"><div class="stat-top"><span>Report completeness</span><span>▤</span></div><div class="num">92%</div><small>Illustrative district measure</small></div>
+    <div class="stat"><div class="stat-top"><span>Open QI projects</span><span>↗</span></div><div class="num" id="statQI">4</div><small>Sample projects</small></div>
+    <div class="stat"><div class="stat-top"><span>Reports flagged</span><span>⚠</span></div><div class="num" id="statFlags">3</div><small>For review in sample data</small></div>
+   </div>
+   <div class="grid two-col">
+    <div class="panel"><div class="panel-head"><div><h3>Programme overview</h3><div class="panel-sub">Illustrative progress against example targets</div></div><span class="tag">DEMO</span></div>
+     <div class="barrow"><span>TB reporting</span><div class="bar"><span style="width:84%"></span></div><b>84%</b></div>
+     <div class="barrow"><span>EPI reporting</span><div class="bar"><span style="width:91%"></span></div><b>91%</b></div>
+     <div class="barrow"><span>HIV viral load</span><div class="bar"><span style="width:88%"></span></div><b>88%</b></div>
+     <div class="barrow"><span>Maternal health</span><div class="bar"><span style="width:94%"></span></div><b>94%</b></div>
+     <div class="barrow"><span>Lab QC</span><div class="bar"><span style="width:79%"></span></div><b>79%</b></div>
+    </div>
+    <div class="panel"><div class="panel-head"><div><h3>Priority follow-up</h3><div class="panel-sub">Sample issues requiring review</div></div></div>
+     <div style="padding:9px 0;border-bottom:1px solid var(--line)"><span class="status review">Review</span> <strong>TB monthly report</strong><div class="panel-sub">Example facility · denominator needs checking</div></div>
+     <div style="padding:9px 0;border-bottom:1px solid var(--line)"><span class="status review">Review</span> <strong>EPI coverage</strong><div class="panel-sub">Example facility · unusually high coverage</div></div>
+     <div style="padding:9px 0"><span class="status draft">Pending</span> <strong>Laboratory QC action</strong><div class="panel-sub">Example facility · evidence not recorded</div></div>
+     <button class="btn small" onclick="go('quality')">Open data quality checks →</button>
+    </div>
+   </div>
+   <div class="panel"><div class="panel-head"><div><h3>Programme workspaces</h3><div class="panel-sub">Select a programme to view its indicators and reporting expectations</div></div></div><div class="grid module-grid" id="dashModules"></div></div>
+  </section>
+  <section id="page-facilities" class="page hidden">
+   <div class="welcome"><div><h2>Facility directory</h2><p>Sixteen entries were supplied in the initial list; the source numbering skips item 12. Internal IDs below are provisional, not official MoH codes.</p></div></div>
+   <div class="panel"><div class="panel-head"><h3>Configured facilities and service centres</h3><input id="facilitySearch" placeholder="Search facility..." style="max-width:260px"></div><div class="table-wrap"><table><thead><tr><th>Internal ID</th><th>Facility / centre</th><th>Level / service type</th><th>Portal</th></tr></thead><tbody id="facilityRows"></tbody></table></div></div>
+  </section>
+  <section id="page-reports" class="page hidden">
+   <div class="welcome"><div><h2>Aggregate reporting</h2><p>Record fictional programme summaries without entering individual client data.</p></div></div>
+   <div class="grid two-col">
+    <div class="panel"><h3 style="margin-bottom:15px">New aggregate report</h3>
+     <form id="reportForm">
+      <div class="field"><label for="rFacility">Facility</label><select id="rFacility" required></select></div>
+      <div class="field"><label for="rProgramme">Programme</label><select id="rProgramme" required></select></div>
+      <div class="form-grid"><div class="field"><label for="rPeriod">Reporting period</label><select id="rPeriod"><option>Weekly</option><option selected>Monthly</option><option>Quarterly</option></select></div><div class="field"><label for="rDate">Period ending</label><input id="rDate" type="date" required></div></div>
+      <div class="form-grid"><div class="field"><label for="rNumerator">Numerator / count</label><input id="rNumerator" type="number" min="0" step="1" placeholder="e.g. 45" required></div><div class="field"><label for="rDenominator">Denominator (if applicable)</label><input id="rDenominator" type="number" min="0" step="1" placeholder="e.g. 50"></div></div>
+      <div class="field"><label for="rNotes">Notes / explanation (no client details)</label><textarea id="rNotes" rows="2" placeholder="Aggregate-level note only"></textarea></div>
+      <button class="btn primary" type="submit">Save draft report</button>
+     </form>
+    </div>
+    <div class="panel"><h3>Validation preview</h3><div class="panel-sub" style="margin-bottom:12px">Basic checks run before saving.</div><ul style="padding-left:19px;color:var(--muted);font-size:13px;line-height:1.9"><li>Counts must be non-negative whole numbers.</li><li>Numerator should not exceed denominator for ordinary proportions.</li><li>Zero denominator makes a percentage undefined.</li><li>Unusual values need review, not automatic rejection.</li><li>Drafts are saved in this browser only.</li></ul><div class="notice">This local demo does not submit to HMIS/DHIS2 or any district server.</div></div>
+   </div>
+   <div class="panel"><div class="panel-head"><div><h3>Reports created in this browser</h3><div class="panel-sub">Demo records only</div></div><button class="btn small" id="exportReports">Export CSV</button></div><div class="table-wrap"><table><thead><tr><th>Facility</th><th>Programme</th><th>Period</th><th>Count</th><th>Denominator</th><th>Rate</th><th>Status</th></tr></thead><tbody id="reportRows"></tbody></table></div></div>
+  </section>
+  <section id="page-programmes" class="page hidden">
+   <div class="welcome"><div><h2>Programme indicators</h2><p>Starter indicator catalogue. Official definitions, denominators, reporting frequency and targets must be validated with the district HMIS/programme focal persons before operational use.</p></div></div>
+   <div class="grid module-grid" id="programmeCards"></div>
+   <div class="panel" id="indicatorPanel"><div class="empty">Select a programme card to view its starter indicators.</div></div>
+  </section>
+  <section id="page-qi" class="page hidden">
+   <div class="welcome"><div><h2>Quality improvement projects</h2><p>Track a measurable gap, baseline, target, action owner, review date and outcome using a Plan–Do–Study–Act approach.</p></div><button class="btn primary" onclick="document.getElementById('qiFormPanel').scrollIntoView({behavior:'smooth'})">＋ New QI project</button></div>
+   <div class="grid two-col">
+    <div class="panel"><div class="panel-head"><h3>Current projects</h3><span class="tag">DEMO + LOCAL</span></div><div id="qiList"></div></div>
+    <div class="panel" id="qiFormPanel"><h3 style="margin-bottom:15px">Create QI project</h3><form id="qiForm">
+     <div class="field"><label for="qTitle">Project title</label><input id="qTitle" required placeholder="e.g. Improve TB report completeness"></div>
+     <div class="form-grid"><div class="field"><label for="qFacility">Facility</label><select id="qFacility" required></select></div><div class="field"><label for="qProgramme">Programme</label><select id="qProgramme" required></select></div></div>
+     <div class="form-grid"><div class="field"><label for="qBaseline">Baseline (%)</label><input id="qBaseline" type="number" min="0" max="100" required></div><div class="field"><label for="qTarget">Target (%)</label><input id="qTarget" type="number" min="0" max="100" required></div></div>
+     <div class="form-grid"><div class="field"><label for="qOwner">Responsible role / team</label><input id="qOwner" required placeholder="e.g. Records officer"></div><div class="field"><label for="qDue">Review date</label><input id="qDue" type="date" required></div></div>
+     <div class="field"><label for="qAction">First improvement action</label><textarea id="qAction" rows="2" required placeholder="Describe a measurable action"></textarea></div>
+     <button class="btn primary" type="submit">Create QI project</button>
+    </form></div>
+   </div>
+  </section>
+  <section id="page-quality" class="page hidden">
+   <div class="welcome"><div><h2>Data quality checks</h2><p>Rules flag potential issues for authorized review. An alert is not proof that a report is wrong.</p></div></div>
+   <div class="grid module-grid">
+    <div class="module-card"><div class="module-icon" style="background:#dbeafe">▤</div><strong>Completeness</strong><p>Required reports and fields received versus expected.</p></div>
+    <div class="module-card"><div class="module-icon" style="background:#fef3c7">◷</div><strong>Timeliness</strong><p>Reports submitted by the approved deadline.</p></div>
+    <div class="module-card"><div class="module-icon" style="background:#fee2e2">⚖</div><strong>Consistency</strong><p>Totals, numerator/denominator and cross-indicator rules.</p></div>
+    <div class="module-card"><div class="module-icon" style="background:#dcfce7">↗</div><strong>Trend anomalies</strong><p>Unexpected changes compared with prior periods.</p></div>
+    <div class="module-card"><div class="module-icon" style="background:#ede9fe">✓</div><strong>Query resolution</strong><p>Track explanation, correction and reviewer decision.</p></div>
+    <div class="module-card"><div class="module-icon" style="background:#fce7f3">♧</div><strong>QI follow-up</strong><p>Monitor overdue actions and targets not yet met.</p></div>
+   </div>
+   <div class="panel"><h3 style="margin-bottom:12px">Active demo queries</h3><div class="table-wrap"><table><thead><tr><th>Query</th><th>Programme</th><th>Example issue</th><th>Suggested action</th><th>Status</th></tr></thead><tbody><tr><td>DQ-001</td><td>TB</td><td>Denominator missing</td><td>Confirm source and definition with facility</td><td><span class="status review">Open</span></td></tr><tr><td>DQ-002</td><td>EPI</td><td>Coverage above expected range</td><td>Check target population and doses reported</td><td><span class="status review">Open</span></td></tr><tr><td>DQ-003</td><td>Laboratory QC</td><td>Corrective action evidence absent</td><td>Record action taken and reviewer verification</td><td><span class="status draft">Pending</span></td></tr></tbody></table></div></div>
+  </section>
+  <section id="page-sync" class="page hidden">
+   <div class="welcome"><div><h2>Offline and synchronization</h2><p>This standalone file demonstrates local browser storage for draft records. It is not yet connected to a server and cannot synchronize between users or devices.</p></div></div>
+   <div class="grid two-col">
+    <div class="panel"><h3>Local storage status</h3><p id="localStatus" class="muted">Checking browser storage…</p><div class="bar" style="margin:12px 0"><span id="localBar" style="width:35%"></span></div><p class="panel-sub">For a production system, sync must use authenticated APIs, version numbers, duplicate protection and conflict handling.</p><button class="btn" id="downloadBackup">Download local demo backup</button></div>
+    <div class="panel"><h3>Production sync requirements</h3><ul style="padding-left:19px;line-height:1.9;color:var(--muted);font-size:13px"><li>Android local database and web IndexedDB</li><li>Authenticated server API and facility-level permissions</li><li>Pending-change queue with retry and acknowledgements</li><li>Conflict resolution; never silently overwrite approved reports</li><li>Encryption, audit logs and secure backups</li><li>Visible last successful sync timestamp</li></ul></div>
+   </div>
+  </section>
+  <div class="footer-note">KD-HQS concept prototype · Synthetic data only · Not approved for clinical operations or official Ministry of Health reporting.</div>
+ </div>
+</main>
+</div>
+<script>
+const facilities=[
+ {id:'KIR-001',name:'Kiruhura Health Centre IV',level:'HC IV'},
+ {id:'KIR-002',name:'Rushere Community Hospital',level:'Hospital'},
+ {id:'KIR-003',name:'Kiruhura Kinoni Health Centre',level:'HC III'},
+ {id:'KIR-004',name:'Kashongi Health Centre',level:'HC III'},
+ {id:'KIR-005',name:'Kitura Health Centre',level:'HC III'},
+ {id:'KIR-006',name:'Kikatsi Health Centre',level:'HC III'},
+ {id:'KIR-007',name:'Rwabigyemano Health Centre',level:'HC III'},
+ {id:'KIR-008',name:'Rwenshande Health Centre',level:'HC III'},
+ {id:'KIR-009',name:'Sanga Health Centre',level:'HC III'},
+ {id:'KIR-010',name:'Lake Mburo Health Centre',level:'HC III'},
+ {id:'KIR-011',name:'Rwabarata Health Centre',level:'HC III'},
+ {id:'KIR-012',name:'Nyakashashara Health Centre',level:'HC III'},
+ {id:'KIR-013',name:'Family Health Resource Centre',level:'HIV-focused service centre'},
+ {id:'KIR-014',name:'Rwanyangwe Health Centre',level:'HC II'},
+ {id:'KIR-015',name:'Mooya Health Centre',level:'HC II'},
+ {id:'KIR-016',name:'Nyakahaita Health Centre',level:'HC II'}
+];
+const programmes=[
+ {id:'tb',name:'TB quality improvement',icon:'⚕',color:'#fee2e2',frequency:'Weekly',desc:'Weekly TB screening, diagnostic-method use, result return, refill continuity, transfers and village-level positivity monitoring.',inds:[
+ ['OPD attendance','Total number of people attending OPD during the week','Weekly'],
+ ['TB screening among OPD attendees','Number screened for TB ÷ total OPD attendance × 100','Weekly'],
+ ['Urine LAM tests','Number tested using urine LAM','Weekly'],
+ ['GeneXpert tests','Number tested using GeneXpert','Weekly'],
+ ['ZN microscopy tests','Number tested using Ziehl–Neelsen microscopy','Weekly'],
+ ['TB-LAMP tests','Number tested using TB-LAMP','Weekly'],
+ ['TB-positive people','Unique people positive by any diagnostic method; avoid double-counting people tested by multiple methods','Weekly'],
+ ['GeneXpert results received','Number of GeneXpert results received by the facility during the week','Weekly'],
+ ['RHZE refills','Number receiving RHZE treatment refills','Weekly'],
+ ['RH refills','Number receiving RH treatment refills','Weekly'],
+ ['Missed refills','Number who missed a scheduled TB treatment refill during the reporting week','Weekly'],
+ ['Transfer-outs','Number of TB patients transferred out during the week','Weekly'],
+ ['Transfer-ins','Number of TB patients transferred in during the week','Weekly'],
+ ['Microscopy not done before GeneXpert referral','Number sent GeneXpert samples for primary diagnosis without microscopy done, and number sent for follow-up without microscopy done; record separately','Weekly'],
+ ['Village positivity','Village with high positivity, positive count and number tested; review small numbers carefully to protect confidentiality','Weekly']]},
+ {id:'epi',name:'EPI immunization',icon:'✚',color:'#fef3c7',frequency:'Routine schedule; quarterly QI',desc:'Immunization coverage, dropout, vaccine availability and cold-chain monitoring.',inds:[
+ ['Dose coverage','Children receiving specified dose ÷ approved target population × 100','Per approved HMIS schedule'],
+ ['Dropout rate','(First-dose count − later-dose count) ÷ first-dose count × 100','Per approved HMIS schedule'],
+ ['Stock-out days','Number of days specified vaccine unavailable','Monthly'],
+ ['Cold-chain monitoring compliance','Checks meeting approved criteria ÷ checks assessed × 100','Monthly']]},
+ {id:'hiv',name:'HIV viral load',icon:'♥',color:'#dbeafe',frequency:'Monthly / quarterly QI',desc:'Aggregate testing coverage, result turnaround, suppression and sample referral indicators.',inds:[
+ ['Viral load sample coverage','Eligible clients sampled ÷ eligible clients due × 100','Monthly'],
+ ['Result return rate','Results received ÷ samples with results expected × 100','Monthly'],
+ ['Median turnaround time','Median days from sample collection to result availability','Monthly'],
+ ['Viral load suppression','Clients meeting approved threshold ÷ clients with valid results assessed × 100','Monthly / quarterly']]},
+ {id:'anc',name:'Antenatal care (ANC)',icon:'♧',color:'#fce7f3',frequency:'Routine schedule; monthly QI',desc:'ANC attendance, continuity of care and aggregate maternal service reporting.',inds:[
+ ['First ANC attendance','Aggregate count of first ANC visits during period','Monthly'],
+ ['Recommended ANC schedule completion','Women completing approved schedule ÷ women eligible for assessment × 100','As defined by HMIS'],
+ ['ANC report completeness','Complete required ANC reports ÷ reports expected × 100','Monthly']]},
+ {id:'pnc',name:'Postnatal care (PNC)',icon:'♧',color:'#f3e8ff',frequency:'Routine schedule; monthly QI',desc:'Timely postnatal care coverage and reporting quality.',inds:[
+ ['Timely PNC coverage','Eligible mothers/newborns receiving PNC in approved interval ÷ eligible assessed × 100','Monthly'],
+ ['PNC report completeness','Complete required PNC reports ÷ reports expected × 100','Monthly']]},
+ {id:'delivery',name:'Maternal delivery services',icon:'⚑',color:'#ffedd5',frequency:'Routine schedule; monthly QI',desc:'Facility deliveries, skilled attendance and maternal service reporting.',inds:[
+ ['Facility deliveries','Aggregate number of deliveries at the facility','Weekly / monthly'],
+ ['Skilled birth attendance','Deliveries attended by qualified skilled personnel ÷ total deliveries assessed × 100','Monthly'],
+ ['Maternal report completeness','Complete required reports ÷ reports expected × 100','Monthly']]},
+ {id:'lab',name:'Laboratory quality control',icon:'⚗',color:'#dcfce7',frequency:'Per QC event / monthly summary',desc:'Aggregate quality-control completion, sample rejection and corrective-action closure.',inds:[
+ ['QC completion','Required QC activities completed ÷ planned QC activities × 100','Monthly'],
+ ['Corrective-action closure','QC actions closed by due date ÷ actions due × 100','Monthly'],
+ ['Sample rejection rate','Samples rejected ÷ samples received × 100','Monthly'],
+ ['QC event documentation','QC events with required documentation ÷ QC events expected × 100','Monthly']]}
+];
+const $=id=>document.getElementById(id);
+function readStore(key,fallback){try{return JSON.parse(localStorage.getItem(key)||'null')??fallback}catch(e){return fallback}}
+function saveStore(key,value){try{localStorage.setItem(key,JSON.stringify(value));return true}catch(e){return false}}
+let reports=readStore('kdhqs_reports',[]);
+let qiProjects=readStore('kdhqs_qi',[
+ {id:'QI-DEMO-01',title:'Improve TB report completeness',facility:'KIR-004',programme:'tb',baseline:75,target:95,owner:'Facility records team',due:'2026-12-31',action:'Use pre-submission checklist and review missing fields weekly',status:'In progress',demo:true},
+ {id:'QI-DEMO-02',title:'Improve viral load result turnaround',facility:'KIR-013',programme:'hiv',baseline:70,target:90,owner:'HIV service team',due:'2027-01-31',action:'Review referral and result-return delays monthly',status:'In progress',demo:true},
+ {id:'QI-DEMO-03',title:'Strengthen EPI reporting consistency',facility:'KIR-006',programme:'epi',baseline:82,target:95,owner:'EPI focal team',due:'2026-12-31',action:'Reconcile dose totals with approved source summaries',status:'Planned',demo:true},
+ {id:'QI-DEMO-04',title:'Close laboratory QC actions on time',facility:'KIR-001',programme:'lab',baseline:78,target:95,owner:'Laboratory focal person',due:'2027-01-15',action:'Assign an owner and due date to each corrective action',status:'In progress',demo:true}
+]);
+function facilityName(id){return facilities.find(f=>f.id===id)?.name||id}
+function programmeName(id){return programmes.find(p=>p.id===id)?.name||id}
+function go(page){document.querySelectorAll('.page').forEach(el=>el.classList.add('hidden'));$('page-'+page).classList.remove('hidden');document.querySelectorAll('[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===page));const titles={dashboard:'District dashboard',facilities:'Facility directory',reports:'Aggregate reporting',programmes:'Programme indicators',qi:'Quality improvement projects',quality:'Data quality checks','sync':'Offline & synchronization'};$('pageTitle').textContent=titles[page]||page;window.scrollTo({top:0,behavior:'smooth'});if(page==='sync')updateSync()}
+document.querySelectorAll('[data-page]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.page)));
+function populateSelect(id,items,labelFn){$(id).innerHTML=items.map(x=>`<option value="${x.id}">${labelFn(x)}</option>`).join('')}
+function renderFacilities(filter=''){$('facilityRows').innerHTML=facilities.filter(f=>(f.name+' '+f.level+' '+f.id).toLowerCase().includes(filter.toLowerCase())).map(f=>`<tr><td>${f.id}</td><td><strong>${f.name}</strong></td><td>${f.level}</td><td><button class="btn small" onclick="openFacility('${f.id}')">Open portal</button></td></tr>`).join('')}
+function openFacility(id){$('rFacility').value=id;go('reports')}
+function renderModules(container,compact=false){$(container).innerHTML=programmes.map(p=>`<button class="module-card" onclick="showProgramme('${p.id}')" style="text-align:left"><div class="module-icon" style="background:${p.color}">${p.icon}</div><strong>${p.name}</strong><p>${p.desc}</p><div style="margin-top:12px"><span class="tag">${p.frequency}</span></div></button>`).join('')}
+function showProgramme(id){
+go('programmes');const p=programmes.find(x=>x.id===id);let tbForm='';let captureForm='';
+if(id==='tb'){tbForm=`<div class="panel" style="margin-top:16px;background:#f8fafb"><div class="panel-head"><div><h3>TB weekly aggregate report</h3><div class="panel-sub">Fictional/demo data only. Enter counts, not names or patient identifiers.</div></div><span class="tag">WEEKLY</span></div><form id="tbWeeklyForm"><div class="form-grid"><div class="field"><label>Facility</label><select id="tbFacility">${facilities.map(f=>`<option value="${f.id}">${f.name} — ${f.level}</option>`).join('')}</select></div><div class="field"><label>Week ending</label><input id="tbWeekEnd" type="date" required></div><div class="field"><label>OPD attendance</label><input id="tbOPD" type="number" min="0" required value="0"></div><div class="field"><label>Number screened for TB</label><input id="tbScreened" type="number" min="0" required value="0"></div><div class="field"><label>Urine LAM tests</label><input id="tbLAM" type="number" min="0" required value="0"></div><div class="field"><label>GeneXpert tests</label><input id="tbGX" type="number" min="0" required value="0"></div><div class="field"><label>ZN microscopy tests</label><input id="tbZN" type="number" min="0" required value="0"></div><div class="field"><label>TB-LAMP tests</label><input id="tbLAMP" type="number" min="0" required value="0"></div><div class="field"><label>Unique people positive by any method</label><input id="tbPositive" type="number" min="0" required value="0"></div><div class="field"><label>GeneXpert results received</label><input id="tbGXResults" type="number" min="0" required value="0"></div><div class="field"><label>Receiving RHZE refills</label><input id="tbRHZE" type="number" min="0" required value="0"></div><div class="field"><label>Receiving RH refills</label><input id="tbRH" type="number" min="0" required value="0"></div><div class="field"><label>Missed refills</label><input id="tbMissed" type="number" min="0" required value="0"></div><div class="field"><label>Transfer-outs</label><input id="tbOut" type="number" min="0" required value="0"></div><div class="field"><label>Transfer-ins</label><input id="tbIn" type="number" min="0" required value="0"></div><div class="field"><label>Primary diagnosis: sent for GeneXpert without microscopy</label><input id="tbNoMicPrimary" type="number" min="0" required value="0"></div><div class="field"><label>Follow-up: sent for GeneXpert without microscopy</label><input id="tbNoMicFollow" type="number" min="0" required value="0"></div><div class="field"><label>Village flagged for high positivity</label><input id="tbVillage" placeholder="Village name/code; follow privacy rules"></div><div class="field"><label>Positive in flagged village</label><input id="tbVillagePos" type="number" min="0" value="0" required></div><div class="field"><label>Tested in flagged village</label><input id="tbVillageTested" type="number" min="0" value="0" required></div></div><div class="field"><label>Aggregate notes / follow-up action (no patient details)</label><textarea id="tbNotes" rows="2" placeholder="Explain data gaps or action needed"></textarea></div><button class="btn primary" type="submit">Save weekly TB draft</button></form></div><div class="panel"><div class="panel-head"><h3>Weekly TB drafts saved on this device</h3><button class="btn small" id="exportTB">Export TB CSV</button></div><div class="table-wrap"><table><thead><tr><th>Facility</th><th>Week ending</th><th>OPD</th><th>Screened</th><th>Screening %</th><th>Positive</th><th>GeneXpert results</th><th>Village flagged</th></tr></thead><tbody id="tbWeeklyRows"></tbody></table></div></div><div class="panel" style="border-color:#99c6bf"><div class="panel-head"><div><h3>Suggested TB QI programme</h3><div class="panel-sub">Draft improvement plan to review with the District TB/Leprosy Supervisor and HMIS focal person</div></div><span class="tag">PROPOSED</span></div><p><strong>Aim:</strong> Within 12 weeks, improve the proportion of OPD attendees screened for TB, strengthen diagnostic documentation and GeneXpert result return, and reduce missed treatment refills at participating facilities, using a verified baseline and locally approved targets.</p><p><strong>Change ideas:</strong> (1) introduce a weekly OPD-to-TB screening tally and reconcile it with OPD attendance; (2) use a diagnostic-method register to record LAM, GeneXpert, ZN microscopy and LAMP totals without double-counting positive people; (3) maintain a GeneXpert sample/result tracking log and review pending results weekly; (4) review refill appointments and missed refills weekly and assign follow-up through approved programme procedures; (5) record transfer-ins/outs and verify continuity of care; (6) review village-level positivity using numerator and tested denominator, then plan targeted screening with district approval.</p><p><strong>Measures each week:</strong> TB screening coverage = screened ÷ OPD attendance × 100; GeneXpert result return = results received ÷ results expected × 100 (use the same cohort and period); missed refill count and rate using an agreed denominator; microscopy-not-done counts for primary diagnosis and follow-up; completeness of transfer records; village positivity = positives ÷ tested × 100 where counts are sufficiently large for safe reporting.</p><p><strong>PDSA cycle:</strong> Weeks 1–2: validate definitions and collect baseline. Weeks 3–4: test the screening tally and result-tracking log in one facility. Weeks 5–8: review weekly run charts, get staff feedback and adapt. Weeks 9–12: extend successful changes, verify data quality and present results at the district review. Assign a named role, review date and documented action for every gap.</p><p class="panel-sub"><strong>Important:</strong> Agree targets and clinical workflow with the current Uganda MoH/National TB and Leprosy Programme guidance. Do not use this prototype to direct individual patient care. Use aggregated village reporting and suppress or combine very small counts to protect confidentiality.</p></div>`}
+else {
+ const saved=readStore('kdhqs_programme_entries',[]).filter(r=>r.programme===id);
+ captureForm=`<div class="panel" style="margin-top:16px"><div class="panel-head"><div><h3>Data capture form — ${p.name}</h3><div class="panel-sub">Enter a value for every indicator below. For percentage indicators, also enter numerator and denominator where applicable. Aggregate data only; do not enter client names or identifiers.</div></div><span class="tag">${p.frequency}</span></div>
+ <form id="programmeCaptureForm"><div class="form-grid"><div class="field"><label for="pcFacility">Facility / service location</label><select id="pcFacility" required>${facilities.map(f=>`<option value="${f.id}">${f.name} — ${f.level}</option>`).join('')}</select></div><div class="field"><label for="pcPeriodType">Reporting period type</label><select id="pcPeriodType"><option>Monthly</option><option>Weekly</option><option>Quarterly</option><option>Per QC event</option></select></div><div class="field"><label for="pcPeriod">Period ending / date</label><input id="pcPeriod" type="date" required value="${new Date().toISOString().slice(0,10)}"></div><div class="field"><label for="pcEnteredBy">Entered by (role only)</label><input id="pcEnteredBy" placeholder="e.g. Facility HMIS officer"></div></div>
+ <h4 style="margin:18px 0 8px">Indicator values</h4><div class="table-wrap"><table><thead><tr><th>Indicator</th><th>Value / count</th><th>Numerator (if used)</th><th>Denominator (if used)</th></tr></thead><tbody>${p.inds.map((ind,i)=>`<tr><td><strong>${ind[0]}</strong><div class="panel-sub">${ind[1]} · ${ind[2]}</div></td><td><input aria-label="${ind[0]} value" type="number" min="0" step="any" id="pcv_${i}" required value="0" style="width:100%;min-width:90px;padding:9px;border:1px solid #cbd5e1;border-radius:8px"></td><td><input aria-label="${ind[0]} numerator" type="number" min="0" step="any" id="pcn_${i}" style="width:100%;min-width:90px;padding:9px;border:1px solid #cbd5e1;border-radius:8px" placeholder="Optional"></td><td><input aria-label="${ind[0]} denominator" type="number" min="0" step="any" id="pcd_${i}" style="width:100%;min-width:90px;padding:9px;border:1px solid #cbd5e1;border-radius:8px" placeholder="Optional"></td></tr>`).join('')}</tbody></table></div>
+ <div class="field" style="margin-top:14px"><label for="pcNotes">Aggregate notes / data gaps / action needed</label><textarea id="pcNotes" rows="2" placeholder="No client-level information"></textarea></div><button class="btn primary" type="submit">Save all indicator entries as draft</button></form></div>
+ <div class="panel"><div class="panel-head"><div><h3>Saved ${p.name} entries</h3><div class="panel-sub">Stored locally on this browser/device only</div></div><button class="btn small" id="exportProgrammeEntries">Export entries CSV</button></div><div class="table-wrap"><table><thead><tr><th>Facility</th><th>Period</th><th>Indicator</th><th>Value</th><th>Numerator</th><th>Denominator</th><th>Status</th></tr></thead><tbody>${saved.length?saved.slice().reverse().flatMap(r=>r.indicators.map(v=>`<tr><td>${facilityName(r.facility)}</td><td>${r.period}</td><td>${v.name}</td><td>${v.value}</td><td>${v.numerator??'—'}</td><td>${v.denominator??'—'}</td><td><span class="status draft">Draft</span></td></tr>`)).join(''):'<tr><td colspan="7" class="empty">No entries saved yet. Complete the form above to capture indicator data.</td></tr>'}</tbody></table></div></div>`;
+}
+$('indicatorPanel').innerHTML=`<div class="panel-head"><div><h3>${p.name}</h3><div class="panel-sub">${p.desc}</div></div><span class="tag">${p.frequency}</span></div><div class="table-wrap"><table><thead><tr><th>Starter indicator</th><th>Proposed calculation / measurement</th><th>Review</th></tr></thead><tbody>${p.inds.map(i=>`<tr><td><strong>${i[0]}</strong></td><td>${i[1]}</td><td>${i[2]}</td></tr>`).join('')}</tbody></table></div><p class="panel-sub" style="margin-top:12px">Confirm official definitions, denominators, disaggregation and targets with the relevant district programme focal person before operational use.</p>${id==='tb'?tbForm:captureForm}`;
+if(id==='tb')initTBWeekly();else initProgrammeCapture(id);
+}
+function initProgrammeCapture(programmeId){
+ const form=$('programmeCaptureForm');if(!form)return;
+ form.addEventListener('submit',e=>{e.preventDefault();const p=programmes.find(x=>x.id===programmeId);const indicators=p.inds.map((ind,i)=>({name:ind[0],value:Number($('pcv_'+i).value),numerator:$('pcn_'+i).value===''?null:Number($('pcn_'+i).value),denominator:$('pcd_'+i).value===''?null:Number($('pcd_'+i).value)}));
+ const item={id:'ENTRY-'+Date.now(),programme:programmeId,facility:$('pcFacility').value,period:$('pcPeriod').value,periodType:$('pcPeriodType').value,enteredBy:$('pcEnteredBy').value,indicators,notes:$('pcNotes').value,status:'Draft',savedAt:new Date().toISOString()};const all=readStore('kdhqs_programme_entries',[]);all.push(item);if(!saveStore('kdhqs_programme_entries',all)){alert('Could not save: browser storage may be full or unavailable. Export/backup existing data before continuing.');return;}alert('All '+indicators.length+' indicator values saved as a local draft on this device. Not submitted to an official system.');showProgramme(programmeId);
+ });
+ const exp=$('exportProgrammeEntries');if(exp)exp.addEventListener('click',()=>{const all=readStore('kdhqs_programme_entries',[]).filter(r=>r.programme===programmeId);const rows=[['Facility','Programme','Period','Period type','Indicator','Value','Numerator','Denominator','Entered by','Status','Notes']];all.forEach(r=>r.indicators.forEach(v=>rows.push([facilityName(r.facility),programmeName(r.programme),r.period,r.periodType,v.name,v.value,v.numerator??'',v.denominator??'',r.enteredBy,r.status,r.notes])));const csv=rows.map(row=>row.map(v=>'"'+String(v??'').replaceAll('"','""')+'"').join(',')).join('\n');download('kdhqs-'+programmeId+'-indicator-entries.csv',csv,'text/csv');});
+}
+
+function initTBWeekly(){const saved=readStore('kdhqs_tb_weekly',[]);const dateEl=$('tbWeekEnd');if(dateEl&&!dateEl.value)dateEl.value=new Date().toISOString().slice(0,10);const form=$('tbWeeklyForm');if(form)form.addEventListener('submit',e=>{e.preventDefault();const ids=['tbOPD','tbScreened','tbLAM','tbGX','tbZN','tbLAMP','tbPositive','tbGXResults','tbRHZE','tbRH','tbMissed','tbOut','tbIn','tbNoMicPrimary','tbNoMicFollow','tbVillagePos','tbVillageTested'];const counts={};ids.forEach(id=>counts[id]=Number($(id).value));if(counts.tbScreened>counts.tbOPD&&!confirm('Screened count exceeds OPD attendance. Check the values before saving. Save draft anyway?'))return;if(counts.tbVillagePos>counts.tbVillageTested&&counts.tbVillageTested>0&&!confirm('Village positive count exceeds village tested count. Save for review anyway?'))return;const item={facility:$('tbFacility').value,weekEnd:$('tbWeekEnd').value,...counts,village:$('tbVillage').value,notes:$('tbNotes').value,savedAt:new Date().toISOString()};const arr=readStore('kdhqs_tb_weekly',[]);arr.push(item);saveStore('kdhqs_tb_weekly',arr);renderTBWeekly();alert('Weekly TB data saved as a local draft on this device only; it has not been submitted to an official system.');});const exp=$('exportTB');if(exp)exp.addEventListener('click',()=>{const arr=readStore('kdhqs_tb_weekly',[]);const keys=arr.length?Object.keys(arr[0]):[];const csv=[keys.join(','),...arr.map(r=>keys.map(k=>'\"'+String(r[k]??'').replaceAll('\"','\"\"')+'\"').join(','))].join('\\n');download('kdhqs-weekly-tb-demo.csv',csv,'text/csv')});renderTBWeekly()}function renderTBWeekly(){const el=$('tbWeeklyRows');if(!el)return;const arr=readStore('kdhqs_tb_weekly',[]);el.innerHTML=arr.length?arr.slice().reverse().map(r=>`<tr><td>${facilityName(r.facility)}</td><td>${r.weekEnd}</td><td>${r.tbOPD}</td><td>${r.tbScreened}</td><td>${Number(r.tbOPD)>0?(100*r.tbScreened/r.tbOPD).toFixed(1)+'%':'—'}</td><td>${r.tbPositive}</td><td>${r.tbGXResults}</td><td>${r.village||'—'}</td></tr>`).join(''):'<tr><td colspan="8" class="empty">No weekly TB drafts saved on this device.</td></tr>'}
+populateSelect('rFacility',facilities,f=>f.name+' — '+f.level);populateSelect('qFacility',facilities,f=>f.name);populateSelect('rProgramme',programmes,p=>p.name);populateSelect('qProgramme',programmes,p=>p.name);
+renderFacilities();renderModules('dashModules',true);renderModules('programmeCards');renderReports();renderQI();updateStats();updateSync();
+const today=new Date();$('rDate').value=today.toISOString().slice(0,10);$('qDue').value=new Date(today.getTime()+60*86400000).toISOString().slice(0,10);
+
+// Direct-entry demonstration build: login gate bypassed for easier testing.
+// This is not secure authentication; use fictional data only.
+
+</script>
+</body>
+</html>
